@@ -8,8 +8,8 @@
 #include <QDateTime>
 #include <QTime>
 #define TXT_FILE_NAME "19317119_win32.txt"
-typedef unsigned long long cycles_time;//用来存放64位时间戳寄存器的内容
-
+typedef unsigned long long cycles_time;//用来存放64位的时间戳计数器里面的内容
+typedef unsigned long long machineFrequency;//用来存放机器主频
 namespace Ui {
 class MainWindow;
 }

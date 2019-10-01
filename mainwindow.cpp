@@ -87,24 +87,31 @@ inline cycles_time MainWindow::currentcycles(){
 
 void MainWindow::on_writeTXTBtn_clicked(bool checked)
 {
+    //===设置变量
     char write_content[100] = { 0 }; //写入内容的数组
+    QTime current_time;//用于获得时分秒
+    cycles_time curTime;//用于存放rdtsc
 
-    QTime current_time;
-
-    cycles_time curTime;//用于存放时间戳
-
+    //===写记录，循环写入10条
     for(int id=0;id<10;id++){
-        memset(write_content,0,100);
-        strcat(write_content,QString::number(id).toStdString().data()); //写入id数
-        strcat(write_content, "\t\t"); //写入间隔
-        strcat(write_content, "像素\t\t"); //写入名字
+        memset(write_content,0,100);//清空
 
-        //插入时间
-        strcat(write_content, QTime::currentTime().toString("hh:mm:ss").toStdString().data());
-        strcat(write_content, "\t\t"); //写入间隔
+        //===接上id===
+        strcat(write_content,QString::number(id).toStdString().data());//写入记录的编号
 
-        curTime=currentcycles();//获取当前时间戳
+        //===接上name===
+        strcat(write_content, "\t\t"); //接上间隔
+        strcat(write_content, "像素"); //接上名字
+
+        //===接上input===
+        strcat(write_content, "\t\t"); //接上间隔
+        strcat(write_content, QTime::currentTime().toString("hh:mm:ss").toStdString().data());//接上当前的时分秒
+
+        //===接上ns===
+        strcat(write_content, "\t\t"); //接上间隔
+        curTime=currentcycles();//获取当前rdtsc
         strcat(write_content, QString::number(curTime).toStdString().data()); //写入时间戳
+
         strcat(write_content, "\t\t\r\n"); //写入间隔
         //DWORD SizeToWrite = sizeof(write_content);
         WriteFile(pFile, write_content, strlen(write_content), NULL, NULL);
