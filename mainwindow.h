@@ -5,7 +5,10 @@
 #include "windows.h"
 #include <qdebug.h>
 #include <QString>
+#include <QDateTime>
+#include <QTime>
 #define TXT_FILE_NAME "19317119_win32.txt"
+typedef unsigned long long cycles_time;//用来存放64位时间戳寄存器的内容
 
 namespace Ui {
 class MainWindow;
@@ -37,6 +40,8 @@ private:
     WCHAR pathTXTWChar[MAX_PATH];
 
     HANDLE pFile;//TXT文件指针
+
+    inline cycles_time currentcycles();//获取一次当前的时间戳
 
 private:
     Ui::MainWindow *ui;

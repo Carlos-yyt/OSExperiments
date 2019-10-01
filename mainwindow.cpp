@@ -79,16 +79,33 @@ void MainWindow::on_createFileBtn_clicked(bool checked)
     }
 }
 
+inline cycles_time MainWindow::currentcycles(){
+    cycles_time result;
+        __asm__ __volatile__ ("rdtsc" : "=A" (result));//可惜不能直接返回它的返回值，要走一个中间变量。
+        return result;
+}
+
 void MainWindow::on_writeTXTBtn_clicked(bool checked)
 {
     char write_content[100] = { 0 }; //写入内容的数组
 
+    QTime current_time;
+
+    cycles_time curTime;//用于存放时间戳
+
     for(int id=0;id<10;id++){
         memset(write_content,0,100);
-        strcat(write_content,QString::number(id).toStdString().data() ); //写入id数
+        strcat(write_content,QString::number(id).toStdString().data()); //写入id数
         strcat(write_content, "\t\t"); //写入间隔
-        strcat(write_content, "像素\t\t\r\n"); //写入名字
+        strcat(write_content, "像素\t\t"); //写入名字
 
+        //插入时间
+        strcat(write_content, QTime::currentTime().toString("hh:mm:ss").toStdString().data());
+        strcat(write_content, "\t\t"); //写入间隔
+
+        curTime=currentcycles();//获取当前时间戳
+        strcat(write_content, QString::number(curTime).toStdString().data()); //写入时间戳
+        strcat(write_content, "\t\t\r\n"); //写入间隔
         //DWORD SizeToWrite = sizeof(write_content);
         WriteFile(pFile, write_content, strlen(write_content), NULL, NULL);
     }
