@@ -7,13 +7,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    DWORD size=GetModuleFileNameA(NULL,path,MAX_PATH);//MAX_PATH在minwindef.h的第33行有定义：#define MAX_PATH 260
+    DWORD size=GetModuleFileNameA(nullptr,path,MAX_PATH);//MAX_PATH在minwindef.h的第33行有定义：#define MAX_PATH 260
     pathStr=path;
     if (size != 0){
         qDebug()<<"程序当前目录："+pathStr;//输出当前目录信息
         int lenPath=strlen(path);
         while(path[lenPath]!='\\'){
-            path[lenPath]='\0';//给地址结尾添上字符串结束标志
+            path[lenPath--]='\0';//给地址结尾添上字符串结束标志
         }
         strcpy(pathTXT,path);//文件所在地址
         strcat(pathTXT,TXT_FILE_NAME);//加上文件名
