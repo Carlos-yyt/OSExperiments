@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -24,6 +24,12 @@ MainWindow::MainWindow(QWidget *parent) :
         qDebug()<<"获取文件地址失败";
         exit(0); //若获取失败，则直接退出程序
     }
+
+    srand(time(0));//随机数的种子
+
+    ui->exTimesLcdNum->setStyleSheet("border: 1px solid green; color: green; background: silver;");
+    ui->exTimesLcdNum->setDigitCount(8);
+    ui->doManyExLineEdit->setValidator(new QIntValidator(1,100000,this));
 }
 
 MainWindow::~MainWindow()
@@ -43,17 +49,27 @@ bool MainWindow::charToWChar(char* src,WCHAR *dest){
 //删除现有文件
 void MainWindow::on_delExistBtn_clicked(bool checked)
 {
-    int fileStatusValue;
-    fileStatusValue=DeleteFile(pathTXTWChar);//TODO 为什么没有文件也能删除成功？找找
-    //qDebug()<<"fileStatusValue："+QString::number(fileStatusValue);
-    //qDebug()<<"ERROR_FILE_NOT_FOUND:"+QString::number(ERROR_FILE_NOT_FOUND);
-    if(fileStatusValue==ERROR_FILE_NOT_FOUND){
-        ui->delFileLab->setText("没有找到文件。可以直接进行程序。");
-    }else if(fileStatusValue==ERROR_ACCESS_DENIED){
-        ui->delFileLab->setText("有文件，但是被设置成了只读文件。");
-    }else {
-        ui->delFileLab->setText("已经找到文件并删除。现在没有文件了。");
-    }
+
+    QFile::remove(pathTXTStr);
+    exTimes=0;
+    exDelay=0;
+
+    ui->delayLab->setText(QString::number(exDelay*1.0/(exTimes*10),'g',6));
+    ui->exTimesLcdNum->display(exTimes);//改变记分板上的试验次数
+//    //===DeleteFile===总有问题
+//    int fileStatusValue;
+
+//    fileStatusValue=DeleteFile(pathTXTWChar);//TODO 为什么没有文件也能删除成功？找找
+//    //qDebug()<<"fileStatusValue："+QString::number(fileStatusValue);
+//    //qDebug()<<"ERROR_FILE_NOT_FOUND:"+QString::number(ERROR_FILE_NOT_FOUND);
+//    if(fileStatusValue==ERROR_FILE_NOT_FOUND){
+//        ui->delFileLab->setText("没有找到文件。可以直接进行程序。");
+//    }else if(fileStatusValue==ERROR_ACCESS_DENIED){
+//        ui->delFileLab->setText("有文件，但是被设置成了只读文件。");
+//    }else {
+//        ui->delFileLab->setText("已经找到文件并删除。现在没有文件了。");
+//    }
+
 }
 
 //创建TXT文件
@@ -79,10 +95,50 @@ void MainWindow::on_createFileBtn_clicked(bool checked)
     }
 }
 
+//获取时间戳
 inline cycles_time MainWindow::currentcycles(){
     cycles_time result;
         __asm__ __volatile__ ("rdtsc" : "=A" (result));//可惜不能直接返回它的返回值，要走一个中间变量。
         return result;
+}
+
+inline void MainWindow::get10NS(){
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[0]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[0]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[1]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[1]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[2]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[2]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[3]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[3]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[4]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[4]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[5]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[5]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[6]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[6]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[7]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[7]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[8]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[8]));
+
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[9]));
+    __asm__ __volatile__ ("rdtsc" : "=A" (ns[9]));
+}
+
+//获得本机主频
+inline machineFrequency MainWindow::getThisMachineFrequency(){
+    LARGE_INTEGER fre;
+    QueryPerformanceFrequency(&fre);
+    return (machineFrequency)fre.QuadPart;
 }
 
 void MainWindow::on_writeTXTBtn_clicked(bool checked)
@@ -90,7 +146,25 @@ void MainWindow::on_writeTXTBtn_clicked(bool checked)
     //===设置变量
     char write_content[100] = { 0 }; //写入内容的数组
     QTime current_time;//用于获得时分秒
-    cycles_time curTime;//用于存放rdtsc
+    int rand_num[10];//随机数
+
+    //为了减少写记录for循环的任务量，把rand()的时间放在外面
+    for (int i=0;i<10;i++) {
+        rand_num[i]=rand()%50+1;
+    }
+
+    //获取主频
+    mFre=getThisMachineFrequency();
+
+    //10个ns时间
+    get10NS();
+
+    //方便多次不退出程序多次实验，加个实验编号
+    strcat(write_content,"第");
+    strcat(write_content,QString::number(++exTimes).toStdString().data());
+    strcat(write_content,"次实验（插入10条记录）");
+    strcat(write_content, "\r\n"); //换行
+    WriteFile(pFile, write_content, strlen(write_content), NULL, NULL);
 
     //===写记录，循环写入10条
     for(int id=0;id<10;id++){
@@ -109,12 +183,32 @@ void MainWindow::on_writeTXTBtn_clicked(bool checked)
 
         //===接上ns===
         strcat(write_content, "\t\t"); //接上间隔
-        curTime=currentcycles();//获取当前rdtsc
-        strcat(write_content, QString::number(curTime).toStdString().data()); //写入时间戳
+        strcat(write_content,QString::number((DWORD)(((double(ns[id]))/mFre)*1000000)).toStdString().data()); //接上ns，不设置很多中间变量是为了减少开支
 
-        strcat(write_content, "\t\t\r\n"); //写入间隔
-        //DWORD SizeToWrite = sizeof(write_content);
+        //===接上随机数===
+        strcat(write_content, "\t"); //接上间隔
+        strcat(write_content, QString::number(rand_num[id]).toStdString().data()); //写入随机数
+        strcat(write_content, "\r\n"); //换行
         WriteFile(pFile, write_content, strlen(write_content), NULL, NULL);
     }
+
+    for(int i=0;i<9;i++){
+        exDelay+=(int)(((double(ns[i+1]-ns[i]))/mFre)*1000000);
+    }
+
+    ui->delayLab->setText(QString::number(exDelay*1.0/(exTimes*9),'g',6));//不是exTimes*10！我真是蠢死了。
+    ui->exTimesLcdNum->display(exTimes);//改变记分板上的试验次数
+}
+
+void MainWindow::on_doManyExBtn_clicked()
+{
+    int exTimes=0;
+    exTimes=ui->doManyExLineEdit->text().toInt();
+    for(int i=0;i<exTimes;i++){
+        on_writeTXTBtn_clicked(true);
+    }
+}
+void MainWindow::on_doManyExBtn_clicked(bool checked)
+{
 
 }
