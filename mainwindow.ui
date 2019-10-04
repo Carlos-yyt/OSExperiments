@@ -2,16 +2,25 @@
 <ui version="4.0">
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
-  <property name="enabled">
-   <bool>true</bool>
-  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>778</width>
-    <height>254</height>
+    <width>875</width>
+    <height>349</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>875</width>
+    <height>349</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>875</width>
+    <height>349</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>操作系统第01次实验</string>
@@ -114,8 +123,8 @@
    <widget class="QLabel" name="exTimeLab">
     <property name="geometry">
      <rect>
-      <x>230</x>
-      <y>100</y>
+      <x>470</x>
+      <y>150</y>
       <width>81</width>
       <height>16</height>
      </rect>
@@ -127,10 +136,10 @@
    <widget class="QLCDNumber" name="exTimesLcdNum">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>100</y>
+      <x>560</x>
+      <y>130</y>
       <width>121</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -155,8 +164,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>450</x>
-      <y>100</y>
+      <x>700</x>
+      <y>150</y>
       <width>111</width>
       <height>20</height>
      </rect>
@@ -168,8 +177,8 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>140</y>
+      <x>460</x>
+      <y>210</y>
       <width>151</width>
       <height>41</height>
      </rect>
@@ -181,9 +190,9 @@
    <widget class="QLabel" name="delayLab">
     <property name="geometry">
      <rect>
-      <x>180</x>
-      <y>140</y>
-      <width>61</width>
+      <x>620</x>
+      <y>210</y>
+      <width>141</width>
       <height>41</height>
      </rect>
     </property>
@@ -194,8 +203,8 @@
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>590</x>
-      <y>30</y>
+      <x>20</x>
+      <y>150</y>
       <width>191</width>
       <height>21</height>
      </rect>
@@ -207,8 +216,8 @@
    <widget class="QLineEdit" name="doManyExLineEdit">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>70</y>
+      <x>260</x>
+      <y>150</y>
       <width>91</width>
       <height>20</height>
      </rect>
@@ -220,8 +229,8 @@
    <widget class="QPushButton" name="doManyExBtn">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>100</y>
+      <x>260</x>
+      <y>180</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -236,8 +245,8 @@
    <widget class="QLabel" name="label_5">
     <property name="geometry">
      <rect>
-      <x>720</x>
-      <y>70</y>
+      <x>360</x>
+      <y>150</y>
       <width>16</width>
       <height>16</height>
      </rect>
@@ -249,8 +258,8 @@
    <widget class="QLabel" name="label_6">
     <property name="geometry">
      <rect>
-      <x>610</x>
-      <y>130</y>
+      <x>260</x>
+      <y>210</y>
       <width>111</width>
       <height>16</height>
      </rect>
@@ -265,7 +274,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>778</width>
+     <width>875</width>
      <height>23</height>
     </rect>
    </property>
